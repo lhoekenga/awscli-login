@@ -6,6 +6,7 @@ import traceback
 from argparse import Namespace
 from datetime import datetime
 from functools import wraps
+from typing import Optional
 
 import boto3
 
@@ -38,15 +39,15 @@ from .typing import Role
 logger = logging.getLogger(__package__)
 
 
-def save_sts_token(session: Session, client, saml: str,
-                   role: Role, duration) -> datetime:
+def save_sts_token(session: Session, client: boto3.client, saml: str,
+                   role: Role, duration: int = 0) -> datetime:
     params = dict(
         RoleArn=role[1],
         PrincipalArn=role[0],
         SAMLAssertion=saml,
     )
     if duration:
-        params['DurationSeconds'] = duration
+        params['DurationSeconds'] = str(duration)
         # duration is optional and can be set by the role;
         # avoid passing if not set.
 
@@ -107,7 +108,7 @@ def error_handler(skip_args=True, validate=False):
     def decorator(f):
         @wraps(f)
         def wrapper(args: Namespace, session: Session):
-            exp = None  # type: Exception
+            exp = None  # type: Optional[Exception]
             exc_info = None
             code = ERROR_NONE
             sig = None
