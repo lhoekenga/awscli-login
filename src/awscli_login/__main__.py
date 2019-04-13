@@ -1,4 +1,5 @@
 # from signal import signal, SIGINT, SIGTERM
+import sys
 import logging
 import traceback
 
@@ -107,6 +108,7 @@ def error_handler(skip_args=True, validate=False):
         @wraps(f)
         def wrapper(args: Namespace, session: Session):
             exp = None  # type: Exception
+            exc_info = None
             code = ERROR_NONE
             sig = None
 
@@ -119,6 +121,7 @@ def error_handler(skip_args=True, validate=False):
 
                 f(profile, session)
             except AWSCLILogin as e:
+                exc_info = sys.exc_info()
                 code = e.code
                 exp = e
             except SIGINT:
@@ -128,12 +131,19 @@ def error_handler(skip_args=True, validate=False):
             except SIGTERM:
                 sig = 'SIGTERM'
             except Exception as e:
+                traceback.print_exc()
+
+                exc_info = sys.exc_info()
                 code = ERROR_UNKNOWN
                 exp = e
             finally:
-                if code:
+                if exp:
                     logger.error(str(exp), exc_info=False)
-                    logger.debug(traceback.format_exc())
+
+                if exc_info:
+                    logger.debug(
+                        '\n' + ''.join(traceback.format_exception(*exc_info))
+                    )
 
                 if sig:
                     logger.info('Received signal: %s. Shutting down...' % sig)

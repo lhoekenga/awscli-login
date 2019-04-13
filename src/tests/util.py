@@ -71,6 +71,8 @@ def login_cli_args(
     subcommand=None,  # TODO FIXME!?
     username=None,
     verbose=0,
+    duration=0,
+    disable_refresh=False,
 ) -> Namespace:
     """
     Function for mocking cli args to login.

@@ -250,10 +250,11 @@ class Profile:
         """ Load required args from profile [~/.aws-login/config]. """
         section = self._get_profile(config, validate)
 
-        for attr in section:
-            if attr not in self._required and attr not in self._optional:
-                logger.warn('Unknown attribute "' + attr + '" in ' +
-                            self.name + ' profile ' + self.name)
+        if section:
+            for attr in section:
+                if attr not in self._required and attr not in self._optional:
+                    logger.warn('Unknown attribute "' + attr + '" in ' +
+                                self.name + ' profile ' + self.name)
 
     def is_factor_valid(self):
         """ Return True if self.factor is valid. False otherwise. """
