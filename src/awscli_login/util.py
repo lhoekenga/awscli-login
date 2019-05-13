@@ -3,6 +3,15 @@ import logging
 
 from datetime import datetime, timezone
 from os import path
+try:
+    # This fails on Windows:
+    # https://github.com/techservicesillinois/awscli-login/issues/24
+    # https://github.com/techservicesillinois/awscli-login/issues/11
+
+    from os import fchmod
+except ImportError:
+    def fchmod(fd: int, mode: int) -> None:
+        return None
 from time import sleep
 from typing import Dict, List, Tuple
 
@@ -166,5 +175,5 @@ def secure_touch(path):
         path - A path to a file.
     """
     fd = os.open(path, os.O_CREAT | os.O_RDONLY, mode=0o600)
-    os.fchmod(fd, 0o600)
+    fchmod(fd, 0o600)
     os.close(fd)
