@@ -9,7 +9,15 @@ from tempfile import TemporaryDirectory
 from typing import Any, Callable, List, Optional  # NOQA
 from unittest.mock import patch
 
-from wurlitzer import pipes
+# wurlitzer does NOT support Windows:
+# https://github.com/minrk/wurlitzer/issues/12
+try:
+    if sys.platform.startswith("win"):
+        raise
+
+    from wurlitzer import pipes
+except Exception:
+    print("Skipping tests that depend on wurlitzer.")
 
 from awscli_login.config import CONFIG_FILE
 
