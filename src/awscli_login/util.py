@@ -8,7 +8,7 @@ try:
     # https://github.com/techservicesillinois/awscli-login/issues/24
     # https://github.com/techservicesillinois/awscli-login/issues/11
 
-    from os import fchmod
+    from os import fchmod  # type: ignore
 except ImportError:
     def fchmod(fd: int, mode: int) -> None:
         return None
