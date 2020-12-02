@@ -311,7 +311,7 @@ class Profile:
             if self.http_header_factor is not None:
                 headers[self.http_header_factor] = self.factor
             else:
-            headers['X-Shiboleth-Duo-Factor'] = self.factor
+                headers['X-Shiboleth-Duo-Factor'] = self.factor
                 headers['X-Shibboleth-Duo-Factor'] = self.factor
 
             if not first_pass or self.factor == 'passcode':
